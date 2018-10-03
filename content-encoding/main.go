@@ -8,14 +8,16 @@ import (
 	"os"
 )
 
+const (
+	addr = ":8080"
+)
+
 func exists(filename string) bool {
 	_, err := os.Stat(filename)
 	return err == nil
 }
 
-type handler struct{}
-
-func (handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func mainHandler(w http.ResponseWriter, r *http.Request) {
 	filePath := r.URL.Path[1:]
 	log.Printf("file_path: %s\n", filePath)
 
@@ -45,10 +47,7 @@ func (handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	s := &http.Server{
-		Addr:    ":8080",
-		Handler: handler{},
-	}
-	fmt.Printf("listening localhost%s...\n", s.Addr)
-	log.Fatal(s.ListenAndServeTLS("../cert/localhost.pem", "../cert/localhost-key.pem"))
+	http.HandleFunc("/", mainHandler)
+	fmt.Printf("listening localhost%s...\n", addr)
+	log.Fatal(http.ListenAndServeTLS(addr, "../cert/localhost.pem", "../cert/localhost-key.pem", nil))
 }

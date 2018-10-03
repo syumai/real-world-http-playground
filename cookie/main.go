@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -8,6 +9,7 @@ import (
 )
 
 const (
+	addr           = ":8080"
 	accessCountKey = "access_count"
 )
 
@@ -83,5 +85,6 @@ func resetHandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	http.HandleFunc("/", countHandler)
 	http.HandleFunc("/reset", resetHandler)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	fmt.Printf("listening localhost%s...\n", addr)
+	log.Fatal(http.ListenAndServe(addr, nil))
 }
