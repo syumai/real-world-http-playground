@@ -51,6 +51,11 @@ func render(w http.ResponseWriter, cnt int) error {
 }
 
 func countHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/" {
+		w.WriteHeader(404)
+		w.Write([]byte("resource not found"))
+	}
+
 	var cnt int
 
 	if ck, err := r.Cookie(accessCountKey); err == nil {
