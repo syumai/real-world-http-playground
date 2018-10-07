@@ -28,17 +28,21 @@ func (h Header) Get(key string) string {
 	return s
 }
 
+func (h Header) Set(key, value string) {
+	h[strings.ToLower(key)] = value
+}
+
 type ResponseWriter struct {
 	net.Conn
 	Status int
-	Header Header
+	header Header
 }
 
 func NewResponseWriter(conn net.Conn) *ResponseWriter {
 	return &ResponseWriter{
 		Conn:   conn,
 		Status: 200,
-		Header: Header{
+		header: Header{
 			"Content-Type": "text/html; charset=utf-8",
 		},
 	}
@@ -46,6 +50,10 @@ func NewResponseWriter(conn net.Conn) *ResponseWriter {
 
 func (w *ResponseWriter) WriteHeader(status int) {
 	w.Status = status
+}
+
+func (w *ResponseWriter) Header() Header {
+	return w.header
 }
 
 func (w *ResponseWriter) Write(p []byte) (int, error) {
@@ -60,9 +68,9 @@ func (w *ResponseWriter) Write(p []byte) (int, error) {
 
 	// Write headers
 	if len(p) > 0 {
-		w.Header["Content-Length"] = strconv.Itoa(len(p) + 1)
+		w.Header().Set("Content-Length", strconv.Itoa(len(p)+1))
 	}
-	for k, v := range w.Header {
+	for k, v := range w.header {
 		line := fmt.Sprintf("%s: %s\n", k, v)
 		n, err := fmt.Fprintf(w.Conn, line)
 		if err != nil {

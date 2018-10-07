@@ -35,9 +35,8 @@ func authorized(auth string) bool {
 
 func handler(w *http.ResponseWriter, r *http.Request) {
 	auth := r.Header.Get("Authorization")
-	fmt.Println(auth)
 	if !authorized(auth) {
-		w.Header["WWW-Authenticate"] = "Basic"
+		w.Header().Set("WWW-Authenticate", "Basic")
 		w.WriteHeader(401)
 		w.Write([]byte("Unauthorized"))
 		return
