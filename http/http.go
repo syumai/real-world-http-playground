@@ -14,11 +14,19 @@ var handlers = map[string]func(*ResponseWriter, *Request){}
 
 type Request struct {
 	Method, Path string
-	Header       map[string]string
+	Header       Header
 	Body         []byte
 }
 
 type Header map[string]string
+
+func (h Header) Get(key string) string {
+	s, ok := h[strings.ToLower(key)]
+	if !ok {
+		return ""
+	}
+	return s
+}
 
 type ResponseWriter struct {
 	net.Conn

@@ -4,8 +4,9 @@ import (
 	"encoding/base64"
 	"fmt"
 	"log"
-	"net/http"
 	"strings"
+
+	"github.com/syumai/real-world-http-playground/http"
 )
 
 const (
@@ -32,10 +33,11 @@ func authorized(auth string) bool {
 	return user == defaultUser && pass == defaultPass
 }
 
-func handler(w http.ResponseWriter, r *http.Request) {
+func handler(w *http.ResponseWriter, r *http.Request) {
 	auth := r.Header.Get("Authorization")
+	fmt.Println(auth)
 	if !authorized(auth) {
-		w.Header().Add("WWW-Authenticate", "Basic")
+		w.Header["WWW-Authenticate"] = "Basic"
 		w.WriteHeader(401)
 		w.Write([]byte("Unauthorized"))
 		return
@@ -46,5 +48,5 @@ func handler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	http.HandleFunc("/", handler)
 	fmt.Printf("listening localhost%s...\n", addr)
-	log.Fatal(http.ListenAndServe(addr, nil))
+	log.Fatal(http.ListenAndServe(addr))
 }
