@@ -41,8 +41,9 @@ func init() {
 func setCountCookie(w http.ResponseWriter, cnt int) {
 	c := strconv.Itoa(cnt)
 	http.SetCookie(w, &http.Cookie{
-		Name:  accessCountKey,
-		Value: c,
+		Name:     accessCountKey,
+		Value:    c,
+		HttpOnly: true,
 	})
 }
 
